@@ -1,15 +1,26 @@
 package io.github.oliviercailloux.hparser;
 
-import com.google.common.io.CharSource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.google.common.collect.MoreCollectors;
 import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser;
-import java.io.Reader;
-import org.antlr.v4.runtime.BailErrorStrategy;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.CommentBlockContext;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.CommentLineContext;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
+import java.util.Iterator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,60 +29,117 @@ public class MyTests {
   @SuppressWarnings("unused")
   private static final Logger LOGGER = LoggerFactory.getLogger(MyTests.class);
 
+  private static JournalContext tree(CharStream s) {
+    HledgerLexer lexer = new HledgerLexer(s);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
+    TokenStream tokens = new CommonTokenStream(lexer);
+    HledgerParser parser = new HledgerParser(tokens);
+    parser.removeErrorListeners();
+    parser.addErrorListener(ThrowingErrorListener.INSTANCE);
+    JournalContext tree = parser.journal();
+    return tree;
+  }
+
   @Test
   void testEmpty() throws Exception {
-    CharSource input = Resourcer.charSource("Empty.journal");
-    try (Reader r = input.openStream()) {
-      CharStream s = CharStreams.fromReader(r);
-      HledgerLexer lexer = new HledgerLexer(s);
-      TokenStream tokens = new CommonTokenStream(lexer);
-      HledgerParser parser = new HledgerParser(tokens);
-      ParseTree tree = parser.journal();
-      LOGGER.info(tree.toStringTree(parser));
-    }
+    CharStream s = CharStreams.fromString("");
+    JournalContext j = tree(s);
+    assertEquals(1, j.getChildCount());
+    assertEquals(1, j.children.size());
+    assertTrue(j.children.stream().collect(MoreCollectors.onlyElement()) instanceof TerminalNode);
+    TerminalNode t = j.getChild(TerminalNode.class, 0);
+    assertEquals(j.EOF(), t);
+    assertEquals("<EOF>", t.getSymbol().getText());
+
+    assertNull(j.getChild(DirectiveContext.class, 0));
+    assertNull(j.getChild(DirectiveContext.class, 1));
+    assertNull(j.getChild(DirectiveContext.class, 2));
+  }
+
+  @Test
+  void testEmptyLines() throws Exception {
+    CharStream s = CharStreams.fromString("\n\n\n");
+    JournalContext j = tree(s);
+    assertEquals(4, j.getChildCount());
+    assertEquals(4, j.children.size());
+    assertNull(j.getChild(CommentBlockContext.class, 0));
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
+  }
+
+  @Test
+  void testInvalid() throws Exception {
+    CharStream s = CharStreams.fromString("invalid");
+    assertThrows(ParsingException.class, () -> tree(s));
   }
 
   @Test
   void testComment() throws Exception {
-    CharSource input = Resourcer.charSource("Comment.journal");
-    try (Reader r = input.openStream()) {
-      CharStream s = CharStreams.fromReader(r);
-      HledgerLexer lexer = new HledgerLexer(s);
-      TokenStream tokens = new CommonTokenStream(lexer);
-      HledgerParser parser = new HledgerParser(tokens);
-      ParseTree tree = parser.journal();
-      LOGGER.info(tree.toStringTree(parser));
-    }
+    CharStream s = CharStreams.fromString("// single comment\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(CommentLineContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
+  }
+
+  @Test
+  void testCommentEmpties() throws Exception {
+    CharStream s = CharStreams.fromString("\n// single comment\n\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertEquals(CommentLineContext.class, it.next().getClass());
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
   }
 
   @Test
   void testBlockComment() throws Exception {
-    CharSource input = Resourcer.charSource("Block comment.journal");
-    try (Reader r = input.openStream()) {
-      CharStream s = CharStreams.fromReader(r);
-      HledgerLexer lexer = new HledgerLexer(s);
-      TokenStream tokens = new CommonTokenStream(lexer);
-      HledgerParser parser = new HledgerParser(tokens);
-      ParseTree tree = parser.journal();
-      LOGGER.info(tree.toStringTree(parser));
-    }
+    CharStream s = CharStreams.fromString("""
+        comment
+        hello, world
+        end comment
+        """);
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(CommentBlockContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
   }
 
   @Test
   void testDirective() throws Exception {
-    CharSource input = Resourcer.charSource("Directive.journal");
-    try (Reader r = input.openStream()) {
-      // CharStream s = CharStreams.fromReader(r);
-      CharStream s = CharStreams.fromString("account somename\naccount another\n\n");
-      HledgerLexer lexer = new HledgerLexer(s);
-      lexer.removeErrorListeners();
-      lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
-      TokenStream tokens = new CommonTokenStream(lexer);
-      HledgerParser parser = new HledgerParser(tokens);
-      parser.removeErrorListeners();
-      parser.addErrorListener(ThrowingErrorListener.INSTANCE);
-      ParseTree tree = parser.journal();
-      LOGGER.info(tree.toStringTree(parser));
-    }
+    CharStream s = CharStreams.fromString("account somename\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("somename", dir.accountDirective().accountName().getText());
+  }
+
+  @Test
+  void testDirectives() throws Exception {
+    CharStream s = CharStreams.fromString("account somename\naccount another\n\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertTrue(it.next() instanceof TerminalNode);
+    assertFalse(it.hasNext());
+    assertEquals("somename", j.getChild(DirectiveContext.class, 0).accountDirective().accountName().getText());
+    assertEquals("another", j.getChild(DirectiveContext.class, 1).accountDirective().accountName().getText());
+    assertEquals(EmptyLineContext.class, j.getChild(EmptyLineContext.class, 0).getClass());
+    assertNull(j.getChild(EmptyLineContext.class, 1));
+    assertNull(j.getChild(EmptyLineContext.class, 2));
   }
 }
