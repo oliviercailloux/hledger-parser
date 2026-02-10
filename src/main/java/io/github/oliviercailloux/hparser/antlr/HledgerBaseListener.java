@@ -41,18 +41,6 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCommentLine(HledgerParser.CommentLineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCommentLine(HledgerParser.CommentLineContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDirective(HledgerParser.DirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -96,6 +84,18 @@ public class HledgerBaseListener implements HledgerListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMultipleWords(HledgerParser.MultipleWordsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWord(HledgerParser.WordContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWord(HledgerParser.WordContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

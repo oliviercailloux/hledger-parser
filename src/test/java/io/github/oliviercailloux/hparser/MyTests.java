@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.collect.MoreCollectors;
 import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser;
-import io.github.oliviercailloux.hparser.antlr.HledgerParser.CommentLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
@@ -67,7 +66,7 @@ public class MyTests {
     assertEquals(EmptyLineContext.class, it.next().getClass());
     assertEquals(EmptyLineContext.class, it.next().getClass());
     assertEquals(EmptyLineContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
 
@@ -82,8 +81,8 @@ public class MyTests {
     CharStream s = CharStreams.fromString("// single comment\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(CommentLineContext.class, it.next().getClass());
     assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
 
@@ -93,9 +92,9 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(EmptyLineContext.class, it.next().getClass());
-    assertEquals(CommentLineContext.class, it.next().getClass());
-    assertEquals(EmptyLineContext.class, it.next().getClass());
     assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(EmptyLineContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
 
@@ -108,8 +107,8 @@ public class MyTests {
         """);
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
-    // assertEquals(CommentBlockContext.class, it.next().getClass());
     assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
 
@@ -119,7 +118,7 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("somename", dir.accountDirective().accountName().getText());
@@ -131,7 +130,7 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("somename", dir.accountDirective().accountName().getText());
@@ -143,7 +142,7 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("somename", dir.accountDirective().accountName().getText());
@@ -157,7 +156,7 @@ public class MyTests {
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(EmptyLineContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     assertEquals("somename", j.getChild(DirectiveContext.class, 0).accountDirective().accountName().getText());
     assertEquals("another", j.getChild(DirectiveContext.class, 1).accountDirective().accountName().getText());
@@ -168,13 +167,47 @@ public class MyTests {
 
   @Test
   void testCommodityDirective() throws Exception {
-    // CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
-    // CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment\n");
     CharStream s = CharStreams.fromString("commodity $0.00\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("$0.00", dir.commodityDirective().commodityString().getText());
+  }
+
+  @Test
+  void testCommodityDirectiveComment() throws Exception {
+    CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("$0.00", dir.commodityDirective().commodityString().getText());
+  }
+
+  @Test
+  void testCommodityDirectiveCommentSep() throws Exception {
+    CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment  with spaces\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("$0.00", dir.commodityDirective().commodityString().getText());
+  }
+
+  @Test
+  void testCommodityDirectiveCommentSc() throws Exception {
+    CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("$0.00", dir.commodityDirective().commodityString().getText());
@@ -186,7 +219,7 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
+    assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("1.000,00 EUR", dir.commodityDirective().commodityString().getText());
