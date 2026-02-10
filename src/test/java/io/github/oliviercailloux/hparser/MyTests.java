@@ -12,6 +12,7 @@ import io.github.oliviercailloux.hparser.antlr.HledgerParser;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.TransactionContext;
 import java.util.Iterator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -223,5 +224,17 @@ public class MyTests {
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("1.000,00 EUR", dir.commodityDirective().commodityString().getText());
+  }
+
+  @Test
+  void testTransaction() throws Exception {
+    CharStream s = CharStreams.fromString("2026-01-01\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2026-01-01", t.DATE().getText());
   }
 }
