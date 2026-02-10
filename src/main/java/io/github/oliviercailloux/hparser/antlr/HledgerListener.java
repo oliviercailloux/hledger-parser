@@ -38,16 +38,6 @@ public interface HledgerListener extends ParseTreeListener {
 	 */
 	void exitCommentLine(HledgerParser.CommentLineContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HledgerParser#commentBlock}.
-	 * @param ctx the parse tree
-	 */
-	void enterCommentBlock(HledgerParser.CommentBlockContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#commentBlock}.
-	 * @param ctx the parse tree
-	 */
-	void exitCommentBlock(HledgerParser.CommentBlockContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link HledgerParser#directive}.
 	 * @param ctx the parse tree
 	 */

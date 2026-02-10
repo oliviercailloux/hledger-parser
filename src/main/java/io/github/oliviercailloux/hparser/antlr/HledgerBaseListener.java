@@ -53,18 +53,6 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCommentBlock(HledgerParser.CommentBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCommentBlock(HledgerParser.CommentBlockContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterDirective(HledgerParser.DirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}
