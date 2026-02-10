@@ -150,7 +150,7 @@ public class MyTests {
 
   @Test
   void testAccountDirectives() throws Exception {
-    CharStream s = CharStreams.fromString("account somename\naccount another\n\n");
+    CharStream s = CharStreams.fromString("account somename\naccount  another\n\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
