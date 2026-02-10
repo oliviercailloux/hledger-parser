@@ -23,9 +23,9 @@ accountDirective : ACCOUNT SPACE+ accountName (SPACE* START_WITHIN_COMMENT comme
 accountName : multipleWords ;
 multipleWords : word (SPACE word)* ;
 word : ACCOUNT | COMMODITY | OTHER_WORD ;
-commentText : (SPACE | SEMICOLON | DATE | word)* ;
+commentText : (SPACE | SEMICOLON | DATE | START_WITHIN_COMMENT | word)* ;
 
 commodityDirective : COMMODITY SPACE+ commodityString (SPACE* START_WITHIN_COMMENT commentText)? EOL ;
 commodityString : multipleWords ;
 
-transaction : DATE EOL ;
+transaction : DATE SPACE* commentText EOL (SPACE+ accountName SPACE SPACE+ commodityString (SPACE* START_WITHIN_COMMENT commentText)? EOL)* ;
