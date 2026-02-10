@@ -28,7 +28,6 @@
                 <goal>antlr4</goal>
               </goals>
               <configuration>
-                <sourceDirectory>${project.build.directory}/fetched-grammar/</sourceDirectory>
                 <treatWarningsAsErrors>true</treatWarningsAsErrors>
                 <outputDirectory>${project.build.sourceDirectory}</outputDirectory>
               </configuration>
@@ -60,7 +59,7 @@
                     </resource>
                   </resources>
                   <outputDirectory>
-                    ${project.build.directory}/fetched-grammar/io/github/oliviercailloux/hparser/antlr/</outputDirectory>
+                    ${project.build.sourceDirectory}/../antlr4/io/github/oliviercailloux/hparser/antlr/</outputDirectory>
                 </configuration>
               </execution>
             </executions>
