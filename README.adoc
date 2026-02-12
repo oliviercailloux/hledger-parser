@@ -1,5 +1,3 @@
 = Parser
 
-Has to run twice because antlr runs before the fetch grammar. I did not find an elegant way to order those plugin executions correctly.
-
 Run with `mvn -Plocal generate-sources`
