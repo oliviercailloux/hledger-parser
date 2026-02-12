@@ -12,7 +12,6 @@ import io.github.oliviercailloux.hparser.antlr.HledgerParser;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
-import io.github.oliviercailloux.hparser.antlr.HledgerParser.TransactionContext;
 import java.util.Iterator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
@@ -221,97 +220,5 @@ public class MyTests {
     assertFalse(it.hasNext());
     DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
     assertEquals("1.000,00 EUR", dir.commodityDirective().commodityString().getText());
-  }
-
-  @Test
-  void testTransactionDate() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n");
-    JournalContext j = tree(s);
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-  }
-
-  @Test
-  void testTransactionDescr() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01 some description\n");
-    JournalContext j = tree(s);
-    LOGGER.info("Parsed: {}.", j.toStringTree());
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-    assertEquals("some description", t.description().getText());
-  }
-
-  @Test
-  void testTransactionDescrComm() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01 some description  ; some comment  ; with semi \n");
-    JournalContext j = tree(s);
-    LOGGER.info("Parsed: {}.", j.toStringTree());
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-    assertEquals("some description", t.description().getText());
-    assertEquals("  ; some comment  ; with semi ", t.endComment().getText());
-  }
-
-  @Test
-  void testTransactionOnePosting() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n  some:spaced account   ; comment\n");
-    JournalContext j = tree(s);
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-    assertEquals("", t.description().getText());
-    assertEquals("  some:spaced account   ; comment\n", t.posting(0).getText());
-    assertEquals("some:spaced account", t.posting(0).accountName().getText());
-  }
-
-  @Test
-  void testAssertion() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n  account  $0  = $10000\n");
-    JournalContext j = tree(s);
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-    assertEquals("account", t.posting(0).accountName().getText());
-    assertEquals("$0", t.posting(0).commodityString().getText());
-    assertEquals("  = $10000", t.posting(0).assertion().getText());
-    assertEquals("$10000", t.posting(0).assertion().commodityString().getText());
-  }
-
-  @Test
-  void testTransactionPostings() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n  some:spaced account   ; comment\n  another  3000 €\n  a final   $ 4000,00  ; comment\n");
-    JournalContext j = tree(s);
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    TransactionContext t = j.getChild(TransactionContext.class, 0);
-    assertEquals("2026-01-01", t.DATE().getText());
-    assertEquals("", t.description().getText());
-    assertEquals("  some:spaced account   ; comment\n", t.posting(0).getText());
-    assertEquals("some:spaced account", t.posting(0).accountName().getText());
-    assertEquals("  another  3000 €\n", t.posting(1).getText());
-    assertEquals("another", t.posting(1).accountName().getText());
-    assertEquals("3000 €", t.posting(1).commodityString().getText());
-    assertEquals("a final", t.posting(2).accountName().getText());
-    assertEquals("$ 4000,00", t.posting(2).commodityString().getText());
   }
 }
