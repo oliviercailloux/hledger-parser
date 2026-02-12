@@ -101,6 +101,18 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterEndComment(HledgerParser.EndCommentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitEndComment(HledgerParser.EndCommentContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCommentText(HledgerParser.CommentTextContext ctx) { }
 	/**
 	 * {@inheritDoc}

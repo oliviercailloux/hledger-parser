@@ -19,13 +19,14 @@ emptyLine : EOL ;
 
 directive : (accountDirective | commodityDirective) ;
 
-accountDirective : ACCOUNT SPACE+ accountName (SPACE* START_WITHIN_COMMENT commentText)? EOL ;
+accountDirective : ACCOUNT SPACE+ accountName SPACE* endComment? EOL ;
 accountName : multipleWords ;
 multipleWords : word (SPACE word)* ;
 word : ACCOUNT | COMMODITY | OTHER_WORD ;
+endComment : START_WITHIN_COMMENT commentText ;
 commentText : (SPACE | SEMICOLON | DATE | START_WITHIN_COMMENT | word)* ;
 
-commodityDirective : COMMODITY SPACE+ commodityString (SPACE* START_WITHIN_COMMENT commentText)? EOL ;
+commodityDirective : COMMODITY SPACE+ commodityString SPACE* endComment? EOL ;
 commodityString : multipleWords ;
 
-transaction : DATE SPACE* commentText EOL (SPACE+ accountName SPACE SPACE+ commodityString (SPACE* START_WITHIN_COMMENT commentText)? EOL)* ;
+transaction : DATE SPACE* commentText EOL (SPACE+ accountName SPACE SPACE+ commodityString SPACE* endComment? EOL)* ;
