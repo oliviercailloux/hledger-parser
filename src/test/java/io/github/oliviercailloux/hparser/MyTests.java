@@ -9,6 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.collect.MoreCollectors;
 import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser;
+import io.github.oliviercailloux.hparser.antlr.HledgerParser.DescriptionContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
@@ -224,11 +225,25 @@ public class MyTests {
   }
 
   @Test
-  void testTransaction() throws Exception {
+  void testTransactionDate() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2026-01-01", t.DATE().getText());
+  }
+
+  @Test
+  void testTransactionDescr() throws Exception {
+    CharStream s = CharStreams.fromString("2026-01-01 some description\n");
+    JournalContext j = tree(s);
+    LOGGER.info("Parsed: {}.", j.getText());
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(DescriptionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     TransactionContext t = j.getChild(TransactionContext.class, 0);

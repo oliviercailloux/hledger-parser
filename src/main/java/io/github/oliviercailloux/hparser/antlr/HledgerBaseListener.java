@@ -156,6 +156,18 @@ public class HledgerBaseListener implements HledgerListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTransaction(HledgerParser.TransactionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDescription(HledgerParser.DescriptionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDescription(HledgerParser.DescriptionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

@@ -29,4 +29,5 @@ commentText : (SPACE | SEMICOLON | DATE | START_WITHIN_COMMENT | word)* ;
 commodityDirective : COMMODITY SPACE+ commodityString SPACE* endComment? EOL ;
 commodityString : multipleWords ;
 
-transaction : DATE SPACE* commentText EOL (SPACE+ accountName SPACE SPACE+ commodityString SPACE* endComment? EOL)* ;
+transaction : DATE SPACE* description SPACE* endComment? EOL (SPACE+ accountName SPACE SPACE+ commodityString SPACE* endComment? EOL)* ;
+description : (SPACE* (SEMICOLON | DATE | word))* ;
