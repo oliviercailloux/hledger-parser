@@ -9,7 +9,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.google.common.collect.MoreCollectors;
 import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser;
-import io.github.oliviercailloux.hparser.antlr.HledgerParser.DescriptionContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
@@ -240,13 +239,43 @@ public class MyTests {
   void testTransactionDescr() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01 some description\n");
     JournalContext j = tree(s);
-    LOGGER.info("Parsed: {}.", j.getText());
+    LOGGER.info("Parsed: {}.", j.toStringTree());
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
-    assertEquals(DescriptionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
     TransactionContext t = j.getChild(TransactionContext.class, 0);
     assertEquals("2026-01-01", t.DATE().getText());
+    assertEquals("some description", t.description().getText());
+  }
+
+  @Test
+  void testTransactionDescrComm() throws Exception {
+    CharStream s = CharStreams.fromString("2026-01-01 some description  ; some comment  ; with semi \n");
+    JournalContext j = tree(s);
+    LOGGER.info("Parsed: {}.", j.toStringTree());
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2026-01-01", t.DATE().getText());
+    assertEquals("some description", t.description().getText());
+    assertEquals("  ; some comment  ; with semi ", t.endComment().getText());
+  }
+
+  @Test
+  void testTransactionOnePosting() throws Exception {
+    CharStream s = CharStreams.fromString("2026-01-01\n  some:spaced account   ; comment\n");
+    JournalContext j = tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2026-01-01", t.DATE().getText());
+    assertEquals("", t.description().getText());
+    assertEquals("  some:spaced account   ; comment\n", t.posting(0).getText());
+    assertEquals("some:spaced account", t.posting(0).accountName().getText());
   }
 }
