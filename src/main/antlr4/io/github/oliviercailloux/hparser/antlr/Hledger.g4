@@ -1,7 +1,7 @@
 grammar Hledger;
 
-COMMENT_BLOCK : 'comment' EOL .*? EOL 'end comment' EOL ;
-COMMENT_LINE : '//' .*? EOL ;
+COMMENT_BLOCK : 'comment' EOL .*? EOL 'end comment' EOL -> channel(HIDDEN) ;
+COMMENT_LINE : '//' .*? EOL -> channel(HIDDEN) ;
 
 SEMICOLON : ';' ;
 EOL : '\r'? '\n' ;
@@ -13,7 +13,7 @@ DATE : [0-9] [0-9] [0-9] [0-9] [-./] [01]? [0-9] [-./] [0-3]? [0-9] ;
 OTHER_WORD : ~[ ;\r\n]+ ;
 
 
-journal : (emptyLine | COMMENT_LINE | COMMENT_BLOCK | directive | transaction)* EOF ;
+journal : (emptyLine | directive | transaction)* EOF ;
 
 emptyLine : EOL ;
 

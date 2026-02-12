@@ -82,7 +82,6 @@ public class MyTests {
     CharStream s = CharStreams.fromString("// single comment\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
-    assertTrue(it.next() instanceof TerminalNode);
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
@@ -93,7 +92,6 @@ public class MyTests {
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(EmptyLineContext.class, it.next().getClass());
-    assertTrue(it.next() instanceof TerminalNode);
     assertEquals(EmptyLineContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
@@ -108,7 +106,6 @@ public class MyTests {
         """);
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
-    assertTrue(it.next() instanceof TerminalNode);
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
   }
@@ -151,7 +148,7 @@ public class MyTests {
 
   @Test
   void testAccountDirectives() throws Exception {
-    CharStream s = CharStreams.fromString("account somename\naccount  another\n\n");
+    CharStream s = CharStreams.fromString("account somename\naccount  another \n\n");
     JournalContext j = tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
