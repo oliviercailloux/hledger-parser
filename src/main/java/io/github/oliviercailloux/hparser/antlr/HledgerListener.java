@@ -147,4 +147,14 @@ public interface HledgerListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPosting(HledgerParser.PostingContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HledgerParser#assertion}.
+	 * @param ctx the parse tree
+	 */
+	void enterAssertion(HledgerParser.AssertionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#assertion}.
+	 * @param ctx the parse tree
+	 */
+	void exitAssertion(HledgerParser.AssertionContext ctx);
 }
