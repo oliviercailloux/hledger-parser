@@ -1,3 +1,0 @@
-= Parser
-
-Run with `mvn -Plocal generate-sources`
