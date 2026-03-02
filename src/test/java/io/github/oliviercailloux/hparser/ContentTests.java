@@ -34,18 +34,6 @@ public class ContentTests {
   }
 
   @Test
-  void testAccountCommenDirective() throws Exception {
-    CharStream s = CharStreams.fromString("account somename  ; commen\n");
-    JournalContext j = TestUtils.tree(s);
-    Iterator<ParseTree> it = j.children.iterator();
-    assertEquals(DirectiveContext.class, it.next().getClass());
-    assertEquals(j.EOF(), it.next());
-    assertFalse(it.hasNext());
-    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
-    assertEquals("somename", dir.accountDirective().accountName().getText());
-  }
-
-  @Test
   void testAccountCommentDirective() throws Exception {
     CharStream s = CharStreams.fromString("account somename  ; comment\n");
     JournalContext j = TestUtils.tree(s);
