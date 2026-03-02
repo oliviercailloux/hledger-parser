@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MyTests {
+public class ContentTests {
   @SuppressWarnings("unused")
-  private static final Logger LOGGER = LoggerFactory.getLogger(MyTests.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(ContentTests.class);
 
   @Test
   void testAccountDirective() throws Exception {
