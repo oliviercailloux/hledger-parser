@@ -22,7 +22,7 @@ public class NoContentTests {
   @Test
   void testEmpty() throws Exception {
     CharStream s = CharStreams.fromString("");
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     assertEquals(1, j.getChildCount());
     assertEquals(1, j.children.size());
     assertTrue(j.children.stream().collect(MoreCollectors.onlyElement()) instanceof TerminalNode);
@@ -38,7 +38,7 @@ public class NoContentTests {
   @Test
   void testEmptyLines() throws Exception {
     CharStream s = CharStreams.fromString("\n\n\n");
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     assertEquals(4, j.getChildCount());
     assertEquals(4, j.children.size());
     Iterator<ParseTree> it = j.children.iterator();
@@ -52,13 +52,13 @@ public class NoContentTests {
   @Test
   void testInvalid() throws Exception {
     CharStream s = CharStreams.fromString("invalid");
-    assertThrows(ParsingException.class, () -> TestUtils.tree(s));
+    assertThrows(ParsingException.class, () -> JournalParser.tree(s));
   }
 
   @Test
   void testComment() throws Exception {
     CharStream s = CharStreams.fromString("// single comment\n");
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
@@ -67,7 +67,7 @@ public class NoContentTests {
   @Test
   void testCommentDash() throws Exception {
     CharStream s = CharStreams.fromString("// single comment\n# another comment\n");
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
@@ -76,7 +76,7 @@ public class NoContentTests {
   @Test
   void testCommentEmpties() throws Exception {
     CharStream s = CharStreams.fromString("\n// single comment\n\n");
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(EmptyLineContext.class, it.next().getClass());
     assertEquals(EmptyLineContext.class, it.next().getClass());
@@ -91,7 +91,7 @@ public class NoContentTests {
         hello, world
         end comment
         """);
-    JournalContext j = TestUtils.tree(s);
+    JournalContext j = JournalParser.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
