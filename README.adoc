@@ -1,3 +1,5 @@
 = Parser
 
 Run with `mvn -Plocal generate-sources`
+
+https://stackoverflow.com/questions/79888382/avoid-repeating-keywords-in-antlr-rules

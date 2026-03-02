@@ -58,46 +58,6 @@ public interface HledgerListener extends ParseTreeListener {
 	 */
 	void exitAccountName(HledgerParser.AccountNameContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HledgerParser#multipleWords}.
-	 * @param ctx the parse tree
-	 */
-	void enterMultipleWords(HledgerParser.MultipleWordsContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#multipleWords}.
-	 * @param ctx the parse tree
-	 */
-	void exitMultipleWords(HledgerParser.MultipleWordsContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HledgerParser#word}.
-	 * @param ctx the parse tree
-	 */
-	void enterWord(HledgerParser.WordContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#word}.
-	 * @param ctx the parse tree
-	 */
-	void exitWord(HledgerParser.WordContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HledgerParser#endComment}.
-	 * @param ctx the parse tree
-	 */
-	void enterEndComment(HledgerParser.EndCommentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#endComment}.
-	 * @param ctx the parse tree
-	 */
-	void exitEndComment(HledgerParser.EndCommentContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HledgerParser#commentText}.
-	 * @param ctx the parse tree
-	 */
-	void enterCommentText(HledgerParser.CommentTextContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#commentText}.
-	 * @param ctx the parse tree
-	 */
-	void exitCommentText(HledgerParser.CommentTextContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link HledgerParser#commodityDirective}.
 	 * @param ctx the parse tree
 	 */
@@ -108,15 +68,15 @@ public interface HledgerListener extends ParseTreeListener {
 	 */
 	void exitCommodityDirective(HledgerParser.CommodityDirectiveContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link HledgerParser#commodityString}.
+	 * Enter a parse tree produced by {@link HledgerParser#commodity}.
 	 * @param ctx the parse tree
 	 */
-	void enterCommodityString(HledgerParser.CommodityStringContext ctx);
+	void enterCommodity(HledgerParser.CommodityContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link HledgerParser#commodityString}.
+	 * Exit a parse tree produced by {@link HledgerParser#commodity}.
 	 * @param ctx the parse tree
 	 */
-	void exitCommodityString(HledgerParser.CommodityStringContext ctx);
+	void exitCommodity(HledgerParser.CommodityContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link HledgerParser#transaction}.
 	 * @param ctx the parse tree
@@ -137,24 +97,4 @@ public interface HledgerListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDescription(HledgerParser.DescriptionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HledgerParser#posting}.
-	 * @param ctx the parse tree
-	 */
-	void enterPosting(HledgerParser.PostingContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#posting}.
-	 * @param ctx the parse tree
-	 */
-	void exitPosting(HledgerParser.PostingContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link HledgerParser#assertion}.
-	 * @param ctx the parse tree
-	 */
-	void enterAssertion(HledgerParser.AssertionContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link HledgerParser#assertion}.
-	 * @param ctx the parse tree
-	 */
-	void exitAssertion(HledgerParser.AssertionContext ctx);
 }

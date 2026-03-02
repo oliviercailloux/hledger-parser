@@ -77,54 +77,6 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterMultipleWords(HledgerParser.MultipleWordsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitMultipleWords(HledgerParser.MultipleWordsContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterWord(HledgerParser.WordContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitWord(HledgerParser.WordContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEndComment(HledgerParser.EndCommentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEndComment(HledgerParser.EndCommentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterCommentText(HledgerParser.CommentTextContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCommentText(HledgerParser.CommentTextContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterCommodityDirective(HledgerParser.CommodityDirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -137,13 +89,13 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCommodityString(HledgerParser.CommodityStringContext ctx) { }
+	@Override public void enterCommodity(HledgerParser.CommodityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCommodityString(HledgerParser.CommodityStringContext ctx) { }
+	@Override public void exitCommodity(HledgerParser.CommodityContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -168,30 +120,6 @@ public class HledgerBaseListener implements HledgerListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDescription(HledgerParser.DescriptionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterPosting(HledgerParser.PostingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitPosting(HledgerParser.PostingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterAssertion(HledgerParser.AssertionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssertion(HledgerParser.AssertionContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
