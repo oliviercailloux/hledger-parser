@@ -210,8 +210,8 @@ public class MyTests {
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("account", t.posting(0).accountName().getText());
     assertEquals("$0", t.posting(0).commodity().getText());
-    assertEquals("  = $10000", t.posting(0).assertion().getText());
-    assertEquals("$10000", t.posting(0).assertion().commodityString().getText());
+    assertEquals("  =$10000", t.posting(0).assertion().getText());
+    assertEquals("$10000", t.posting(0).assertion().commodity().getText());
   }
 
   @Test
