@@ -143,6 +143,19 @@ public class MyTests {
   }
 
   @Test
+  void testPDirective() throws Exception {
+    CharStream s = CharStreams.fromString("P 1989-01-01 € BEF 40.3399\n");
+    JournalContext j = TestUtils.tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("€", dir.pDirective().commoditySymbol().getText());
+    assertEquals("BEF40.3399", dir.pDirective().commodityAmount().getText());
+  }
+
+  @Test
   void testTransactionDate() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01\n");
     JournalContext j = TestUtils.tree(s);
@@ -217,7 +230,7 @@ public class MyTests {
   @Test
   void testTransactionPostings() throws Exception {
     CharStream s = CharStreams.fromString(
-        "2026-01-01\n  some:spaced account   ; comment\n  another  3000 €\n  a final   $ 4000,00  ; comment\n");
+        "2026-01-01\n  some:spaced account   ; comment\n  * another  3000 €\n  a final   $ 4000,00  ; comment\n");
     JournalContext j = TestUtils.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
@@ -227,10 +240,13 @@ public class MyTests {
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("", t.description().getText());
     assertEquals("some:spacedaccount", t.posting(0).getText());
+    assertNull(t.posting(0).STAR());
     assertEquals("some:spacedaccount", t.posting(0).accountName().getText());
-    assertEquals("another  3000€", t.posting(1).getText());
+    assertEquals("* another  3000€", t.posting(1).getText());
+    assertEquals("* ", t.posting(1).STAR().getText());
     assertEquals("another", t.posting(1).accountName().getText());
     assertEquals("3000€", t.posting(1).commodity().getText());
+    assertNull(t.posting(2).STAR());
     assertEquals("afinal", t.posting(2).accountName().getText());
     assertEquals("$4000,00", t.posting(2).commodity().getText());
   }

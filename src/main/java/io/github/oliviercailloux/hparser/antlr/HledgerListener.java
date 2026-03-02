@@ -78,6 +78,36 @@ public interface HledgerListener extends ParseTreeListener {
 	 */
 	void exitCommodity(HledgerParser.CommodityContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HledgerParser#pDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterPDirective(HledgerParser.PDirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#pDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitPDirective(HledgerParser.PDirectiveContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HledgerParser#commoditySymbol}.
+	 * @param ctx the parse tree
+	 */
+	void enterCommoditySymbol(HledgerParser.CommoditySymbolContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#commoditySymbol}.
+	 * @param ctx the parse tree
+	 */
+	void exitCommoditySymbol(HledgerParser.CommoditySymbolContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HledgerParser#commodityAmount}.
+	 * @param ctx the parse tree
+	 */
+	void enterCommodityAmount(HledgerParser.CommodityAmountContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#commodityAmount}.
+	 * @param ctx the parse tree
+	 */
+	void exitCommodityAmount(HledgerParser.CommodityAmountContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HledgerParser#transaction}.
 	 * @param ctx the parse tree
 	 */
