@@ -4,8 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-import io.github.oliviercailloux.hparser.TestUtils.TokensAndJournal;
-import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.CommodityContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
@@ -14,8 +12,6 @@ import io.github.oliviercailloux.hparser.antlr.HledgerParser.TransactionContext;
 import java.util.Iterator;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -63,7 +59,7 @@ public class MyTests {
 
   @Test
   void testAccountDirectives() throws Exception {
-    CharStream s = CharStreams.fromString("account somename\naccount  another \n\n");
+    CharStream s = CharStreams.fromString("account somename\naccount another \n\n");
     JournalContext j = TestUtils.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
@@ -95,6 +91,10 @@ public class MyTests {
   @Test
   void testCommodityDirectiveComment() throws Exception {
     CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment\n");
+    // TokensAndJournal parsed = TestUtils.parse(s, false);
+    // LOGGER.info("Got: {}.", parsed.tokenDescriptions());
+    // JournalContext j = parsed.tree();
+    // LOGGER.info("Parsed: {}.", j.toStringTree());
     JournalContext j = TestUtils.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
@@ -145,15 +145,7 @@ public class MyTests {
   @Test
   void testTransactionDate() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01\n");
-    TokensAndJournal parsed = TestUtils.parse(s, false);
-    CommonTokenStream tokens = parsed.t();
-    tokens.fill(); // Important!
-
-    for (Token t : tokens.getTokens()) {
-      LOGGER.info("TEXT=[" + t.getText() + "] " + "TYPE="
-          + HledgerLexer.VOCABULARY.getSymbolicName(t.getType()) + " CHANNEL=" + t.getChannel());
-    }
-    JournalContext j = parsed.tree();
+    JournalContext j = TestUtils.tree(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -202,8 +194,8 @@ public class MyTests {
     TransactionContext t = j.getChild(TransactionContext.class, 0);
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("", t.description().getText());
-    assertEquals("  some:spaced account   ; comment\n", t.posting(0).getText());
-    assertEquals("some:spaced account", t.posting(0).accountName().getText());
+    assertEquals("some:spacedaccount", t.posting(0).getText());
+    assertEquals("some:spacedaccount", t.posting(0).accountName().getText());
   }
 
   @Test
@@ -217,7 +209,7 @@ public class MyTests {
     TransactionContext t = j.getChild(TransactionContext.class, 0);
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("account", t.posting(0).accountName().getText());
-    assertEquals("$0", t.posting(0).commodityString().getText());
+    assertEquals("$0", t.posting(0).commodity().getText());
     assertEquals("  = $10000", t.posting(0).assertion().getText());
     assertEquals("$10000", t.posting(0).assertion().commodityString().getText());
   }
@@ -234,12 +226,12 @@ public class MyTests {
     TransactionContext t = j.getChild(TransactionContext.class, 0);
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("", t.description().getText());
-    assertEquals("  some:spaced account   ; comment\n", t.posting(0).getText());
-    assertEquals("some:spaced account", t.posting(0).accountName().getText());
-    assertEquals("  another  3000 €\n", t.posting(1).getText());
+    assertEquals("some:spacedaccount", t.posting(0).getText());
+    assertEquals("some:spacedaccount", t.posting(0).accountName().getText());
+    assertEquals("another  3000€", t.posting(1).getText());
     assertEquals("another", t.posting(1).accountName().getText());
-    assertEquals("3000 €", t.posting(1).commodityString().getText());
-    assertEquals("a final", t.posting(2).accountName().getText());
-    assertEquals("$ 4000,00", t.posting(2).commodityString().getText());
+    assertEquals("3000€", t.posting(1).commodity().getText());
+    assertEquals("afinal", t.posting(2).accountName().getText());
+    assertEquals("$4000,00", t.posting(2).commodity().getText());
   }
 }

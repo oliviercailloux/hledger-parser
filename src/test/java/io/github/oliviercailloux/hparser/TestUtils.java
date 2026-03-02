@@ -1,14 +1,32 @@
 package io.github.oliviercailloux.hparser;
 
+import com.google.common.collect.ImmutableList;
 import io.github.oliviercailloux.hparser.antlr.HledgerLexer;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
+import java.util.List;
+import org.antlr.v4.runtime.BufferedTokenStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.Token;
 
 public class TestUtils {
-  public static record TokensAndJournal (CommonTokenStream t, JournalContext tree) {
+  public static record TokenDescription (String text, String name, int channel) {
+  }
+
+  public static record TokensAndJournal (BufferedTokenStream stream, JournalContext tree) {
+    public List<Token> tokens() {
+      return stream.getTokens();
+    }
+
+    public ImmutableList<TokenDescription> tokenDescriptions() {
+      return tokens().stream().map(t -> describe(t))
+          .collect(ImmutableList.toImmutableList());
+    }
+
+    private TokenDescription describe(Token t) {
+      return new TokenDescription(t.getText(), HledgerLexer.VOCABULARY.getSymbolicName(t.getType()), t.getChannel());
+    }
   }
 
   public static JournalContext tree(CharStream s) {
@@ -22,6 +40,7 @@ public class TestUtils {
       lexer.addErrorListener(ThrowingErrorListener.INSTANCE);
     }
     CommonTokenStream tokens = new CommonTokenStream(lexer);
+    tokens.fill();
     HledgerParser parser = new HledgerParser(tokens);
     if (safe) {
       parser.removeErrorListeners();
