@@ -12,7 +12,7 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>hledger parser</name>
   <properties>
-    <github-repository>${project.name}</github-repository>
+    <github-repository>${project.artifactId}</github-repository>
   </properties>
   <build>
     <pluginManagement>
