@@ -65,6 +65,15 @@ public class NoContentTests {
   }
 
   @Test
+  void testCommentDash() throws Exception {
+    CharStream s = CharStreams.fromString("// single comment\n# another comment\n");
+    JournalContext j = TestUtils.tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+  }
+
+  @Test
   void testCommentEmpties() throws Exception {
     CharStream s = CharStreams.fromString("\n// single comment\n\n");
     JournalContext j = TestUtils.tree(s);
