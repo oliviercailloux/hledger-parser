@@ -53,6 +53,18 @@ public class HledgerBaseListener implements HledgerListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDecimalMarkDirective(HledgerParser.DecimalMarkDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDecimalMarkDirective(HledgerParser.DecimalMarkDirectiveContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterAccountDirective(HledgerParser.AccountDirectiveContext ctx) { }
 	/**
 	 * {@inheritDoc}

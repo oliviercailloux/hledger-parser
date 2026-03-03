@@ -22,6 +22,18 @@ public class ContentTests {
   private static final Logger LOGGER = LoggerFactory.getLogger(ContentTests.class);
 
   @Test
+  void testDecimalMarkDirective() throws Exception {
+    CharStream s = CharStreams.fromString("decimal-mark .\n");
+    JournalContext j = JournalParser.tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(DirectiveContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    DirectiveContext dir = j.getChild(DirectiveContext.class, 0);
+    assertEquals("decimal-mark .\n", dir.decimalMarkDirective().getText());
+  }
+
+  @Test
   void testAccountDirective() throws Exception {
     CharStream s = CharStreams.fromString("account somename\n");
     JournalContext j = JournalParser.tree(s);
