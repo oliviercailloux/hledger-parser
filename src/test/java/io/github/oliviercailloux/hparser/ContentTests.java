@@ -250,6 +250,21 @@ public class ContentTests {
   }
 
   @Test
+  void testTransactionTag() throws Exception {
+    CharStream s = CharStreams.fromString("2022-07-03 descr\n  ;OFX descr\n  account  $1\n");
+    JournalContext j = JournalParser.tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2022-07-03", t.DATE().getText());
+    assertEquals("descr", t.description().getText());
+    assertEquals("account", t.posting(0).accountName().getText());
+    assertEquals("$1", t.posting(0).commodity().getText());
+  }
+
+  @Test
   void testAssertion() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01\n  account  $0  = $10000\n");
     JournalContext j = JournalParser.tree(s);
