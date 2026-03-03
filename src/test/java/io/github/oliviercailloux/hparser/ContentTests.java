@@ -235,6 +235,21 @@ public class ContentTests {
   }
 
   @Test
+  void testTransactionSpacing() throws Exception {
+    CharStream s = CharStreams.fromString("1998-03-31 descr\n  account  $1 ;   comment\n");
+    JournalContext j = JournalParser.tree(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("1998-03-31", t.DATE().getText());
+    assertEquals("descr", t.description().getText());
+    assertEquals("account", t.posting(0).accountName().getText());
+    assertEquals("$1", t.posting(0).commodity().getText());
+  }
+
+  @Test
   void testAssertion() throws Exception {
     CharStream s = CharStreams.fromString("2026-01-01\n  account  $0  = $10000\n");
     JournalContext j = JournalParser.tree(s);

@@ -3,7 +3,7 @@ grammar Hledger;
 EOL : '\r'? '\n' ;
 COMMENT_BLOCK : 'comment' EOL .*? EOL 'end comment' EOL -> channel(HIDDEN) ;
 COMMENT_LINE : ('//' | '#') .*? EOL -> channel(HIDDEN) ;
-INLINE_COMMENT : ' ' ' '+ ';' ~[\r\n]* -> channel(HIDDEN) ;
+INLINE_COMMENT : ' '+ ';' ~[\r\n]* -> channel(HIDDEN) ;
 SEP : ' ' ' '+ ;
 DECIMAL_MARK : 'decimal-mark .' ;
 TAG : 'tag' ;
