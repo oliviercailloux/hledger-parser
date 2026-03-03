@@ -48,6 +48,26 @@ public interface HledgerListener extends ParseTreeListener {
 	 */
 	void exitDecimalMarkDirective(HledgerParser.DecimalMarkDirectiveContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link HledgerParser#tagDirective}.
+	 * @param ctx the parse tree
+	 */
+	void enterTagDirective(HledgerParser.TagDirectiveContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#tagDirective}.
+	 * @param ctx the parse tree
+	 */
+	void exitTagDirective(HledgerParser.TagDirectiveContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link HledgerParser#tag}.
+	 * @param ctx the parse tree
+	 */
+	void enterTag(HledgerParser.TagContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link HledgerParser#tag}.
+	 * @param ctx the parse tree
+	 */
+	void exitTag(HledgerParser.TagContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link HledgerParser#accountDirective}.
 	 * @param ctx the parse tree
 	 */
