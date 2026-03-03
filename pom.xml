@@ -6,7 +6,7 @@
   <parent>
     <groupId>io.github.oliviercailloux</groupId>
     <artifactId>pom</artifactId>
-    <version>0.0.30</version>
+    <version>0.0.31-SNAPSHOT</version>
   </parent>
   <artifactId>hledger-parser</artifactId>
   <version>0.0.1-SNAPSHOT</version>
@@ -33,6 +33,14 @@
               </configuration>
             </execution>
           </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-javadoc-plugin</artifactId>
+          <version>3.12.0</version>
+          <!-- Pbl seen with cat target/reports/apidocs/options -->
+          <configuration>
+            <outputDirectory>/tmp/apidocs</outputDirectory>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
