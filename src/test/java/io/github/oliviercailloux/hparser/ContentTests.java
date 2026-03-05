@@ -4,14 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.google.common.io.CharSource;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.CommodityContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.TransactionContext;
 import java.util.Iterator;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -23,8 +22,8 @@ public class ContentTests {
 
   @Test
   void testDecimalMarkDirective() throws Exception {
-    CharStream s = CharStreams.fromString("decimal-mark .\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("decimal-mark .\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -35,8 +34,8 @@ public class ContentTests {
 
   @Test
   void testTagDirective() throws Exception {
-    CharStream s = CharStreams.fromString("tag someTag\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("tag someTag\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -47,8 +46,8 @@ public class ContentTests {
 
   @Test
   void testAccountDirective() throws Exception {
-    CharStream s = CharStreams.fromString("account somename\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("account somename\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -59,8 +58,8 @@ public class ContentTests {
 
   @Test
   void testAccountCommentDirective() throws Exception {
-    CharStream s = CharStreams.fromString("account somename  ; comment\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("account somename  ; comment\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -71,8 +70,8 @@ public class ContentTests {
 
   @Test
   void testAccountDirectives() throws Exception {
-    CharStream s = CharStreams.fromString("account somename\naccount another \n\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("account somename\naccount another \n\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(DirectiveContext.class, it.next().getClass());
@@ -90,8 +89,8 @@ public class ContentTests {
 
   @Test
   void testCommodityDirective() throws Exception {
-    CharStream s = CharStreams.fromString("commodity $0.00\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("commodity $0.00\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -102,12 +101,12 @@ public class ContentTests {
 
   @Test
   void testCommodityDirectiveComment() throws Exception {
-    CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment\n");
+    CharSource s = CharSource.wrap("commodity $0.00     ; Some comment\n");
     // TokensAndJournal parsed = TestUtils.parse(s, false);
     // LOGGER.info("Got: {}.", parsed.tokenDescriptions());
     // JournalContext j = parsed.tree();
     // LOGGER.info("Parsed: {}.", j.toStringTree());
-    JournalContext j = JournalParser.tree(s);
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -118,8 +117,8 @@ public class ContentTests {
 
   @Test
   void testCommodityDirectiveCommentSep() throws Exception {
-    CharStream s = CharStreams.fromString("commodity $0.00     ; Some comment  with spaces\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("commodity $0.00     ; Some comment  with spaces\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -130,9 +129,8 @@ public class ContentTests {
 
   @Test
   void testCommodityDirectiveCommentSc() throws Exception {
-    CharStream s = CharStreams
-        .fromString("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -143,8 +141,8 @@ public class ContentTests {
 
   @Test
   void testCommoditySpcDirective() throws Exception {
-    CharStream s = CharStreams.fromString("commodity 1.000,00 EUR\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("commodity 1.000,00 EUR\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -156,8 +154,8 @@ public class ContentTests {
 
   @Test
   void testPDirective() throws Exception {
-    CharStream s = CharStreams.fromString("P 1989-01-01 € BEF 40.3399\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("P 1989-01-01 € BEF 40.3399\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -169,8 +167,8 @@ public class ContentTests {
 
   @Test
   void testTransactionDate() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -181,8 +179,8 @@ public class ContentTests {
 
   @Test
   void testTransactionDescr() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01 some description\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01 some description\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -194,8 +192,8 @@ public class ContentTests {
 
   @Test
   void testTransactionDescrTrap() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01 P \n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01 P \n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -207,9 +205,8 @@ public class ContentTests {
 
   @Test
   void testTransactionDescrComm() throws Exception {
-    CharStream s =
-        CharStreams.fromString("2026-01-01 some description  ; some comment  ; with semi \n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01 some description  ; some comment  ; with semi \n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -221,8 +218,8 @@ public class ContentTests {
 
   @Test
   void testTransactionOnePosting() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n  some:spaced account   ; comment\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01\n  some:spaced account   ; comment\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -236,8 +233,8 @@ public class ContentTests {
 
   @Test
   void testTransactionSpacing() throws Exception {
-    CharStream s = CharStreams.fromString("1998-03-31 descr\n  account  $1 ;   comment\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("1998-03-31 descr\n  account  $1 ;   comment\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -251,8 +248,8 @@ public class ContentTests {
 
   @Test
   void testTransactionTag() throws Exception {
-    CharStream s = CharStreams.fromString("2022-07-03 descr\n  ;OFX descr\n  account  $1\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2022-07-03 descr\n  ;OFX descr\n  account  $1\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -266,8 +263,8 @@ public class ContentTests {
 
   @Test
   void testAssertion() throws Exception {
-    CharStream s = CharStreams.fromString("2026-01-01\n  account  $0  = $10000\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("2026-01-01\n  account  $0  = $10000\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());
@@ -282,9 +279,9 @@ public class ContentTests {
 
   @Test
   void testTransactionPostings() throws Exception {
-    CharStream s = CharStreams.fromString(
+    CharSource s = CharSource.wrap(
         "2026-01-01\n  some:spaced account   ; comment\n  * another  3000 €\n  a final   $ 4000,00  ; comment\n");
-    JournalContext j = JournalParser.tree(s);
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(TransactionContext.class, it.next().getClass());
     assertEquals(j.EOF(), it.next());

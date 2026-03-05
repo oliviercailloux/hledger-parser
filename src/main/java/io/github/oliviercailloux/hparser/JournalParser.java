@@ -32,12 +32,12 @@ public class JournalParser {
     }
   }
 
-  public static JournalContext tree(CharSource s) throws IOException {
-    return tree(CharStreams.fromString(s.read()));
+  public static JournalContext journal(CharSource s) throws IOException {
+    return parse(CharStreams.fromString(s.read()), true).tree;
   }
 
-  static JournalContext tree(CharStream s) {
-    return parse(s, true).tree;
+  public static TokensAndJournal parse(CharSource s) throws IOException {
+    return parse(CharStreams.fromString(s.read()), true);
   }
 
   static TokensAndJournal parse(CharStream s, boolean safe) {

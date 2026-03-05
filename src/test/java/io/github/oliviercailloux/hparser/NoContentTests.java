@@ -7,12 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.MoreCollectors;
+import com.google.common.io.CharSource;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.DirectiveContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.EmptyLineContext;
 import io.github.oliviercailloux.hparser.antlr.HledgerParser.JournalContext;
 import java.util.Iterator;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.junit.jupiter.api.Test;
@@ -21,8 +20,8 @@ public class NoContentTests {
 
   @Test
   void testEmpty() throws Exception {
-    CharStream s = CharStreams.fromString("");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("");
+    JournalContext j = JournalParser.journal(s);
     assertEquals(1, j.getChildCount());
     assertEquals(1, j.children.size());
     assertTrue(j.children.stream().collect(MoreCollectors.onlyElement()) instanceof TerminalNode);
@@ -37,8 +36,8 @@ public class NoContentTests {
 
   @Test
   void testEmptyLines() throws Exception {
-    CharStream s = CharStreams.fromString("\n\n\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("\n\n\n");
+    JournalContext j = JournalParser.journal(s);
     assertEquals(4, j.getChildCount());
     assertEquals(4, j.children.size());
     Iterator<ParseTree> it = j.children.iterator();
@@ -51,14 +50,14 @@ public class NoContentTests {
 
   @Test
   void testInvalid() throws Exception {
-    CharStream s = CharStreams.fromString("invalid");
-    assertThrows(ParsingException.class, () -> JournalParser.tree(s));
+    CharSource s = CharSource.wrap("invalid");
+    assertThrows(ParsingException.class, () -> JournalParser.journal(s));
   }
 
   @Test
   void testComment() throws Exception {
-    CharStream s = CharStreams.fromString("// single comment\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("// single comment\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
@@ -66,8 +65,8 @@ public class NoContentTests {
 
   @Test
   void testCommentDash() throws Exception {
-    CharStream s = CharStreams.fromString("// single comment\n# another comment\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("// single comment\n# another comment\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
@@ -75,8 +74,8 @@ public class NoContentTests {
 
   @Test
   void testCommentEmpties() throws Exception {
-    CharStream s = CharStreams.fromString("\n// single comment\n\n");
-    JournalContext j = JournalParser.tree(s);
+    CharSource s = CharSource.wrap("\n// single comment\n\n");
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(EmptyLineContext.class, it.next().getClass());
     assertEquals(EmptyLineContext.class, it.next().getClass());
@@ -86,12 +85,12 @@ public class NoContentTests {
 
   @Test
   void testBlockComment() throws Exception {
-    CharStream s = CharStreams.fromString("""
+    CharSource s = CharSource.wrap("""
         comment
         hello, world
         end comment
         """);
-    JournalContext j = JournalParser.tree(s);
+    JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(j.EOF(), it.next());
     assertFalse(it.hasNext());
