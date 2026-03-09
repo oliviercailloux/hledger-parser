@@ -129,7 +129,8 @@ public class ContentTests {
 
   @Test
   void testCommodityDirectiveCommentSc() throws Exception {
-    CharSource s = CharSource.wrap("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
+    CharSource s =
+        CharSource.wrap("commodity $0.00     ; Some comment  with spaces and ; semicolons\n");
     JournalContext j = JournalParser.journal(s);
     Iterator<ParseTree> it = j.children.iterator();
     assertEquals(DirectiveContext.class, it.next().getClass());
@@ -201,6 +202,23 @@ public class ContentTests {
     TransactionContext t = j.getChild(TransactionContext.class, 0);
     assertEquals("2026-01-01", t.DATE().getText());
     assertEquals("P ", t.description().getText());
+  }
+
+  @Test
+  void testTransactionDescrSemic() throws Exception {
+    CharSource s = CharSource.wrap("2026-01-01 some description ; with semi colon\n");
+    JournalContext j = JournalParser.journal(s);
+    Iterator<ParseTree> it = j.children.iterator();
+    assertEquals(TransactionContext.class, it.next().getClass());
+    assertEquals(j.EOF(), it.next());
+    assertFalse(it.hasNext());
+    TransactionContext t = j.getChild(TransactionContext.class, 0);
+    assertEquals("2026-01-01", t.DATE().getText());
+    /*
+     * Per spec, it seems like the semicolon is a comment delimiter, even without two spaces before
+     * it (actually even with zero spaces but we don’t insist on this here)
+     */
+    assertEquals("somedescription", t.description().getText());
   }
 
   @Test
